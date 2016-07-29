@@ -31,33 +31,8 @@
       font-family: Arial;
     }
 
-    #sv-lab-header {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      height: 65px;
-      background-color: #fff;
-    }
-    #sv-lab-header div {
-      min-width: 300px;
-      text-align: center;
-    }
 
-    #sv-logo {
-      width: 100px;
-      height: 62px;
-      background: url(images/sv-green.svg) no-repeat center center;
-      background-size: contain;
-      display: block;
-      margin: auto;
-    }
 
-    #hide-header {
-      color: #2732FF;
-      text-decoration: none;
-      border-bottom: 1px solid #2732FF;
-      font-size: 14px;
-    }
 
     #screenshot-image {
       width: 100%;
@@ -310,13 +285,7 @@
 </head>
 
 <body>
-  <div id="sv-lab-header" class="flex-container">
-    <div>
-      <a href="https://www.stickmanventures.com/" id="sv-logo" title="Stickman Ventures"></a>
-    </div>
-    <div><a id="hide-header">Hide This Header ❌</a></div>
-    <div><a href="https://www.stickmanventures.com/blog/2016/01/12/bringing-the-ginger-morph-target-demo-into-the-progressive-web-app-future/" class="button" title="Learn how we built this">Learn More &raquo;</a></div>
-  </div>
+
 
   <div id="renderer"></div>
 
@@ -363,16 +332,6 @@
     <div class="modal">
       <h1>Share Link <button id="copytoclipboard-share" data-clipboard-target="#share-link" type="button">Copy to Clipboard</button></h1>
       <textarea id="share-link"></textarea>
-    </div>
-  </div>
-
-  <div id="version-modal" class="hidden">
-    <div class="full-shadow"></div>
-    <div class="modal">
-      <h1>New Version: Ginger v2.1.0</h1>
-      <p>➡ Now a Progressive Web App - Use "Add to Homescreen"</p>
-      <p>➡ Accessibility updates for color contract</p>
-      <p>➡ 100/100 in <a href="https://github.com/GoogleChrome/lighthouse" style="color:#ffffff">Lighthouse</a> audit</p>
     </div>
   </div>
 

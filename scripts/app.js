@@ -74,11 +74,6 @@ function appInit() {
 
   var version = '2';
 
-  document.getElementById('hide-header').addEventListener('click', function (e) {
-    ga('send', 'pageview', {'page': '/header-hidden', 'title': 'Header hidden'});
-    document.getElementById('sv-lab-header').remove();
-  });
-
   document.getElementById('copytoclipboard-image').addEventListener('click', function(e) {
     ga('send', 'pageview', {'page': '/downloaded', 'title': 'Downloaded Screenshot'});
     var image = document.getElementById('screenshot-image').src;
