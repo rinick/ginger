@@ -5,7 +5,7 @@ var webComponentsSupported = ('registerElement' in document
 if (!webComponentsSupported) {
   var script = document.createElement('script');
   script.async = true;
-  script.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+  script.src = 'bower_components/webcomponentsjs/webcomponents-lite.min.js';
   document.head.appendChild(script);
 
   window.addEventListener('WebComponentsReady', function(e) {
@@ -34,7 +34,7 @@ if (!webComponentsSupported) {
 // Async loading w/bindings for Ginger
 var script = document.createElement('script');
 script.async = true;
-script.src = '/bower_components/three.js/three.min.js';
+script.src = 'bower_components/three.js/three.min.js';
 script.onload = initGinger;
 document.head.appendChild(script);
 
@@ -46,7 +46,7 @@ function initGinger() {
 // Async loading w/bindings for copy to clipboard
 var script = document.createElement('script');
 script.async = true;
-script.src = '/bower_components/clipboard/dist/clipboard.min.js';
+script.src = 'bower_components/clipboard/dist/clipboard.min.js';
 script.onload = initClipboard;
 document.head.appendChild(script);
 
