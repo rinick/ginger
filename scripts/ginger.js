@@ -3,7 +3,6 @@ var Ginger = function() {
 
   var aspect;
 
-  var mousetracking = false;
 
   var queue = [];
 
@@ -15,11 +14,6 @@ var Ginger = function() {
   // True when all the meshes are loaded.
   var loaded = false;
 
-  // Prevent duplicate screenshot countdowns.
-  var countingDown = false;
-
-  var slider = document.getElementById('range');
-  var selected = 'eyes';
 
   // All textures that need to be loaded before the meshes.
   var textures = {
@@ -319,7 +313,9 @@ var Ginger = function() {
     }
   };
 
+  let _needMorph = false;
   function morph() {
+    _needMorph = false;
     // Another separate loop for morph behaviors. This is so the scale or morph
     // of certain meshes can be adjusted to account for others.
     for (var item in morphs) {
@@ -481,23 +477,23 @@ var Ginger = function() {
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  function onmousemove(event) {
-    var e = {};
-    e.touches = [{clientX: event.clientX, clientY: event.clientY}];
-    e.type = "mousemove";
-    ontouchmove(e);
+
+  let lookx = 0.5;
+  let looky = 0.5;
+  let _needLook = false;
+  function updateLookX(x) {
+    lookx = x;
+    _needLook = true;
   }
-
-  function ontouchmove(event) {
-    
-    if(event.type == "touchmove") {
-      event.preventDefault();
-    }
-
-    if (mousetracking) {
+  function updateLookY(y) {
+    looky = y;
+    _needLook = true;
+  }
+  function look() {
+    _needLook = false;
       var mouse = new THREE.Vector3(
-          (event.touches[0].clientX / window.innerWidth) * 2 - 1,
-          - (event.touches[0].clientY / window.innerHeight) * 2 + 1,
+          lookx-0.5,
+          -looky + 0.5,
           0.5
       );
 
@@ -520,7 +516,6 @@ var Ginger = function() {
       ginger.rotation.x /= 5;
       ginger.rotation.y /= 5;
       ginger.rotation.z = 0;
-    }
   }
 
   function onrangeslide(event) {
@@ -551,161 +546,18 @@ var Ginger = function() {
     var value = (max - min) * progress + min;
 
     selectControl.morph.value = value;
+    _needMorph = true;
   }
 
-  function onselect(event) {
-    var value = event.target.value;
-    select(value);
-  }
 
-  function onsharepress(event) {
-    var modal = document.getElementById('share-modal');
-    modal.classList.remove('hidden');
-
-    var shareLink = document.getElementById('share-link');
-    shareLink.value = generateShareLink();
-  }
-
-  function onsharedismiss(event) {
-    var modal = document.getElementById('share-modal');
-    modal.classList.add('hidden');
-  }
-
-  function onscreenshotpress(event) {
-    var counter = document.getElementById('counter');
-    counter.classList.remove('hidden');
-
-    var countdown = 3;
-
-    // Recursive countdown until the countdown is less than 0.
-    var count = function() {
-      countdown--;
-      counter.innerHTML = countdown + 1;
-
-      if (countdown < 0) {
-        screenshot();
-        counter.classList.add('hidden');
-        countingDown = false;
-
-        return;
-      }
-
-      countingDown = true;
-
-      // The countdown is not done so schedule another one.
-      window.setTimeout(count, 1000);
-    };
-
-    if (!countingDown) {
-      count();
-    }
-  }
-
-  function onmousetrack(event) {
-    mousetracking = !mousetracking;
-
-    var elButton = document.getElementById('mousetrack');
-
-    var offon = mousetracking === true ? 'ON' : 'OFF';
-    elButton.textContent = 'Follow ' + offon;
-    elButton.className = 'buttoncolor-' + offon;
-  }
-
-  function onscreenshotdismiss(event) {
-    var modal = document.getElementById('screenshot-modal');
-    modal.classList.add('hidden');
-  }
-
-  function screenshot() {
-    var modal = document.getElementById('screenshot-modal');
-    modal.classList.remove('hidden');
-
-    var getImage = renderer.domElement.toDataURL('image/jpeg', 0.8);
-
-    var image = document.getElementById('screenshot-image');
-    image.src = getImage;
-  }
-
-  function select(value) {
-    var selectControl;
-    var found = false;
-
-    for (var control in controls) {
-      if (controls[control].control == value) {
-        selected = value;
-        selectControl = controls[control];
-        found = true;
-        break;
-      }
-    }
-
-    if (!found) {
-      return;
-    }
-
-    var min = selectControl.min;
-    var max = selectControl.max;
-    var percent = (((selectControl.morph.value - min) * 100) / (max - min)) / 100;
-
-    slider.value = percent;
-  }
-
-  function generateShareLink() {
-    var url = [location.protocol, '//', location.host, location.pathname].join('');
-    var index = 0;
-
-    // Add get params to the url.
-    for (var control in controls) {
-      var selectControl = controls[control];
-
-      if (index === 0) {
-        url += '?';
-      } else {
-        url += '&';
-      }
-
-      index++;
-
-      var min = selectControl.min;
-      var max = selectControl.max;
-      var percent = (((selectControl.morph.value - min) * 100) / (max - min)) / 100;
-      url += selectControl.control + '=' + percent;
-    }
-
-    return url;
-  }
-
-  function parseShareLink() {
-    // Remove the "?" from the beginning of querystring whilst assigning.
-    var querystring = window.location.search.substring(1);
-
-    // Pairs are separated by ampersands.
-    var pairs = querystring.split('&');
-
-    // Map of GET params to be returned.
-    var map = {};
-
-    for (var i = 0; i < pairs.length; i++) {
-      var pair = pairs[i].split('=');
-
-      if (pair.length != 2) {
-        continue;
-      }
-
-      var name = decodeURIComponent(pair[0]);
-      var value = decodeURIComponent(pair[1]);
-      map[name] = value;
-    }
-
-    return map;
-  }
-
+  
   function recalculateAspect() {
     aspect = window.innerWidth / window.innerHeight;
     camera.aspect = aspect;
     camera.updateProjectionMatrix();
   }
 
+  
   function animate() {
     requestAnimationFrame(animate);
 
@@ -714,7 +566,12 @@ var Ginger = function() {
       queue[i].callback(queue[i].args);
       queue.splice(i, 1);
     }
-
+    if (_needMorph) {
+      morph();
+    }
+    if (_needLook) {
+      look();
+    }
     renderer.render(scene, camera);
   }
 
@@ -743,31 +600,9 @@ var Ginger = function() {
       // Allow viewport resizing whenever the window resizes.
       window.onresize = onresize;
 
-      // Setup event so ginger's eyes track the mouse
+
       var elRenderer = document.getElementById('renderer');
-      elRenderer.addEventListener('mousemove', onmousemove);
-      elRenderer.addEventListener('touchmove', ontouchmove);
 
-      // Setup events for the slider and selector.
-      document.getElementById('range').onchange = onrangeslide;
-      document.getElementById('range').oninput = onrangeslide;
-      document.getElementById('morph').onchange = onselect;
-      document.getElementById('share').onclick = onsharepress;
-      document.getElementById('mousetrack').onclick = onmousetrack;
-      document.getElementById('screenshot').onclick = onscreenshotpress;
-
-      // Parse the url substring for GET parameters and put them
-      // in a dictionary.
-      var sharedParams = parseShareLink();
-
-      // Set the initial values of ginger to the values in the GET params.
-      for (var control in controls) {
-        var selectedControl = controls[control];
-
-        if (sharedParams[selectedControl.control] !== undefined) {
-          updateMorph(sharedParams[selectedControl.control], selectedControl.control);
-        }
-      }
 
       // Let there be light! The light is simply a directional light that
       // shines directly inter Ginger's face.
@@ -787,12 +622,13 @@ var Ginger = function() {
       // Load ginger in the background.
       load();
 
-      // Set the initial state of the range slider.
-      select(selected);
 
       // Start the render loop.
       animate();
 
-    }
+    },
+    updateMorph:updateMorph,
+    updateLookX:updateLookX,
+    updateLookY:updateLookY
   };
 };
