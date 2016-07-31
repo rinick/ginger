@@ -38,7 +38,7 @@ script.src = 'bower_components/three.js/three.min.js';
 script.onload = initGinger;
 document.head.appendChild(script);
 
-var dslink = new DS.BrowserUserLink({enableAck:true, wsUpdateUri:"ws://rnd.iot-dsa.org/ws"});
+var dslink = new DS.BrowserUserLink({enableAck:true, wsUpdateUri:"wss://rnd.iot-dsa.org/ws"});
 dslink.connect();
 
 
