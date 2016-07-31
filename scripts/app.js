@@ -57,7 +57,7 @@ function initGinger() {
     lipcurl:"lipcurl",
     lipsync:"lipsync",
     face:"sex",
-    jawwidth:"jawwidth"
+    jawwidth:"width"
   }      
   //var datanames = "lookx,looky";
   for (var dataname in dataMap) {
