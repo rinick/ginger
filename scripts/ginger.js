@@ -313,7 +313,7 @@ var Ginger = function() {
     }
   };
 
-  let _needMorph = false;
+  var _needMorph = false;
   function morph() {
     _needMorph = false;
     // Another separate loop for morph behaviors. This is so the scale or morph
@@ -478,9 +478,9 @@ var Ginger = function() {
   }
 
 
-  let lookx = 0.5;
-  let looky = 0.5;
-  let _needLook = false;
+  var lookx = 0.5;
+  var looky = 0.5;
+  var _needLook = false;
   function updateLookX(x) {
     lookx = x;
     _needLook = true;
